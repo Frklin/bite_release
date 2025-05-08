@@ -72,23 +72,28 @@ class SilhRenderer(torch.nn.Module):
         self.img_size_scalar = image_size
         self.register_buffer('image_size', torch.Tensor([image_size, image_size]).float()[None, :].float())
         self.register_buffer('principal_point', torch.Tensor([image_size / 2., image_size / 2.]).float()[None, :].float())
+        # self.register_buffer('image_size', torch.Tensor([260, 480]).float()[None, :].float())
+        # self.register_buffer('principal_point', torch.Tensor([260 / 2., 480 / 2.]).float()[None, :].float())
         # Rasterization settings for differentiable rendering, where the blur_radius
         # initialization is based on Liu et al, 'Soft Rasterizer: A Differentiable 
         # Renderer for Image-based 3D Reasoning', ICCV 2019
         self.blend_params = BlendParams(sigma=1e-4, gamma=1e-4)
         self.raster_settings_soft = RasterizationSettings(
             image_size=image_size,      # 128
+            # image_size=[260, 480],
             blur_radius=np.log(1. / 1e-4 - 1.)*self.blend_params.sigma,  
             faces_per_pixel=100)     #50, 
         # Renderer for Image-based 3D Reasoning', body part segmentation
         self.blend_params_parts = BlendParams(sigma=2*1e-4, gamma=1e-4)
         self.raster_settings_soft_parts = RasterizationSettings(
             image_size=image_size,      # 128
+            # image_size=[260, 480],
             blur_radius=np.log(1. / 1e-4 - 1.)*self.blend_params_parts.sigma,  
             faces_per_pixel=60)     #50, 
         # settings for visualization renderer
         self.raster_settings_vis = RasterizationSettings(
                 image_size=image_size, 
+                # image_size=[260, 480],
                 blur_radius=0.0, 
                 faces_per_pixel=1)
 
@@ -102,14 +107,21 @@ class SilhRenderer(torch.nn.Module):
                 R=self.R.repeat((bs, 1, 1)), T=self.T.repeat((bs, 1)), 
                 image_size=self.image_size.repeat((bs, 1)))
         elif pytorch3d.__version__ == '0.6.1':
+                cameras = PerspectiveCameras(device=device, in_ndc=False,
+                focal_length=focal_lengths.repeat((1, 2)), 
+                principal_point=self.principal_point.repeat((bs, 1)), 
+                R=self.R.repeat((bs, 1, 1)), T=self.T.repeat((bs, 1)), 
+                image_size=self.image_size.repeat((bs, 1)))
+        else: 
             cameras = PerspectiveCameras(device=device, in_ndc=False,
             focal_length=focal_lengths.repeat((1, 2)), 
             principal_point=self.principal_point.repeat((bs, 1)), 
             R=self.R.repeat((bs, 1, 1)), T=self.T.repeat((bs, 1)), 
             image_size=self.image_size.repeat((bs, 1)))
-        else: 
-            print('this part depends on the version of pytorch3d, code was developed with 0.2.5')
-            raise ValueError
+            # image_size= torch.tensor([[260.,480.]], device='cuda:0'))
+
+            # print('this part depends on the version of pytorch3d, code was developed with 0.2.5')
+            # raise ValueError
         return cameras
 
     def _get_visualization_from_mesh(self, mesh, cameras, lights=None):
@@ -220,7 +232,7 @@ class SilhRenderer(torch.nn.Module):
         #   cameras: pytorch camera, for example PerspectiveCameras()
         bs = points.shape[0]
         device = points.device
-        screen_size = self.image_size.repeat((bs, 1))
+        screen_size = self.image_size.repeat((bs, 1)) #torch.tensor([[260.,480.]], device='cuda:0')#
         if cameras is None:
             cameras = self._get_cam(focal_lengths)
         if pytorch3d.__version__ == '0.2.5':
@@ -228,8 +240,9 @@ class SilhRenderer(torch.nn.Module):
         elif pytorch3d.__version__ == '0.6.1':
             proj_points_orig = cameras.transform_points_screen(points)[:, :, [1, 0]]        
         else: 
-            print('this part depends on the version of pytorch3d, code was developed with 0.2.5')
-            raise ValueError
+            proj_points_orig = cameras.transform_points_screen(points)[:, :, [1, 0]]        
+            # print('this part depends on the version of pytorch3d, code was developed with 0.2.5')
+            # raise ValueError
         # flip, otherwise the 1st and 2nd row are exchanged compared to the ground truth
         proj_points = torch.flip(proj_points_orig, [2])   
         # --- project points 'manually'

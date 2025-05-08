@@ -36,7 +36,7 @@ from __future__ import print_function
 
 import numpy as np
 import torch
-import chumpy as ch
+# import chumpy as ch
 import os.path
 from torch import nn
 from torch.autograd import Variable

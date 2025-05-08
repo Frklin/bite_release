@@ -29,7 +29,7 @@ class ImgCrops(data.Dataset):
         self.test_name_list = []
         for ind in np.arange(0, len(self.image_list)):
             self.test_name_list.append(str(ind))
-        print('len(dataset): ' + str(self.__len__()))
+        # print('len(dataset): ' + str(self.__len__()))
 
     def __getitem__(self, index):
 
@@ -47,6 +47,8 @@ class ImgCrops(data.Dataset):
             c = torch.Tensor(bbox_c)
             s = bbox_s
             img_prep = crop(img, c, s, [self.inp_res, self.inp_res], rot=0)
+            # img_prep =  img #crop(img, c, s, [260, self.inp_res], rot=0)
+
         else:
             # prepare image (cropping and color)
             img_max = max(img.shape[1], img.shape[2])
@@ -59,6 +61,8 @@ class ImgCrops(data.Dataset):
                 img_padded[:, :, start:start+img.shape[2]] = img   
             img = img_padded
             img_prep = im_to_torch(imresize(img, [self.inp_res, self.inp_res], interp='bilinear'))   
+            # img_prep = img #im_to_torch(imresize(img, [self.inp_res, self.inp_res], interp='bilinear'))   
+
         
         inp = color_normalize(img_prep, self.DATA_INFO.rgb_mean, self.DATA_INFO.rgb_stddev)
         # add the following fields to make it compatible with stanext, most of them are fake

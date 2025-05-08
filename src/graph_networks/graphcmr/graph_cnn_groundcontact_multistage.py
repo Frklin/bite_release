@@ -37,7 +37,7 @@ class GraphCNNMS(nn.Module):
         # self.num_layers = len(self.A) - 1
         self.num_layers = num_layers
         assert self.num_layers <= len(self.A) - 1
-        print("Number of downsampling layer: {}".format(self.num_layers))
+        # print("Number of downsampling layer: {}".format(self.num_layers))
         self.num_downsample = num_downsample
         self.n_resnet_out = n_resnet_out
 

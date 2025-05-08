@@ -95,10 +95,10 @@ class BITEInferenceModel():        #(nn.Module):
             nf_version=cfg.params.NF_VERSION, ref_net_type=cfg.params.REF_NET_TYPE, graphcnn_type=cfg.params.GRAPHCNN_TYPE, isflat_type=cfg.params.ISFLAT_TYPE, shaperef_type=cfg.params.SHAPEREF_TYPE) 
         
         # load trained model
-        print(path_model_file_complete)
+        # print(path_model_file_complete)
         assert os.path.isfile(path_model_file_complete)
-        print('Loading model weights from file: {}'.format(path_model_file_complete))
-        checkpoint_complete = torch.load(path_model_file_complete)
+        # print('Loading model weights from file: {}'.format(path_model_file_complete))
+        checkpoint_complete = torch.load(path_model_file_complete, weights_only=False)
         state_dict_complete = checkpoint_complete['state_dict']
         self.complete_model.load_state_dict(state_dict_complete)    # , strict=False)        
         self.complete_model = self.complete_model.to(self.device)

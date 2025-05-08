@@ -110,7 +110,7 @@ class DogsVOC(data.Dataset):
         self.train_set = train_set_init + val_set_init[:-36]
         self.val_set = val_set_init[-36:]
 
-        print('len(dataset): ' + str(self.__len__()))
+        # print('len(dataset): ' + str(self.__len__()))
         # print(self.test_name_list[0:10])
 
     def get_body_part_indices(self):

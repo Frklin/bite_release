@@ -96,7 +96,7 @@ class StanExt(data.Dataset):
                 my_sample = self.test_name_list[2]
                 for ind in range(0, 12):
                     self.test_name_list[ind] = my_sample
-        print('len(dataset): ' + str(self.__len__()))
+        # print('len(dataset): ' + str(self.__len__()))
 
         # add results for eyes, whithers and throat as obtained through anipose -> they are used
         #   as pseudo ground truth at training time.

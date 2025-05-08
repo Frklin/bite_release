@@ -494,7 +494,7 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
         p_dropout = 0.2      # 0.5     
         # ------------------------------ SMAL MODEL ------------------------------
         self.smal = SMAL(smal_model_type=self.smal_model_type, template_name='neutral')     
-        print('SMAL model type: ' + self.smal.smal_model_type)      
+        # print('SMAL model type: ' + self.smal.smal_model_type)      
         # New for rendering without tail
         f_np = self.smal.faces.detach().cpu().numpy()
         self.f_no_tail_np = f_np[np.isin(f_np[:,:], VERTEX_IDS_TAIL).sum(axis=1)==0, :]
@@ -629,12 +629,14 @@ class ModelImageTo3d_withshape_withproj(nn.Module):
             pred_flength = pred_flength_orig.clone()  # torch.abs(pred_flength_orig)
             pred_flength[pred_flength_orig<=0] = norm_dict['flength_mean'][None, :]
 
+
         # ------------------------------ RENDERING ------------------------------
         # get 3d model (SMAL)
         V, keyp_green_3d, _ = self.smal(beta=pred_betas, betas_limbs=pred_betas_limbs, pose=pred_pose, trans=pred_trans, get_skin=True, keyp_conf=self.smal_keyp_conf, shapedirs_sel=shapedirs_sel)
         keyp_3d = keyp_green_3d[:, :self.n_keyp, :]     # (bs, 20, 3)
         # render silhouette
         faces_prep = self.smal.faces.unsqueeze(0).expand((batch_size, -1, -1))
+        
         if not self.silh_no_tail:
             pred_silh_images, pred_keyp = self.silh_renderer(vertices=V, 
                 points=keyp_3d, faces=faces_prep, focal_lengths=pred_flength)

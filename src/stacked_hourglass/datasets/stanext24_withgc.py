@@ -119,7 +119,7 @@ class StanExtGC(data.Dataset):
 
         # load smal symmetry info
         self.sym_ids_dict = get_symmetry_indices()
-        print('len(dataset): ' + str(self.__len__()))
+        # print('len(dataset): ' + str(self.__len__()))
 
         # add results for eyes, whithers and throat as obtained through anipose -> they are used
         #   as pseudo ground truth at training time.

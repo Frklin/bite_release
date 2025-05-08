@@ -49,7 +49,7 @@ class SketchfabScans(data.Dataset):
         for name in name_list:
             self.test_name_list.append(name.split('/')[-1])
 
-        print('len(dataset): ' + str(self.__len__()))
+        # print('len(dataset): ' + str(self.__len__()))
         
         self.test_mesh_path_list = []
         self.all_pc_paths = []

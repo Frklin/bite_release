@@ -34,7 +34,7 @@ class ImgCrops(data.Dataset):
         name_list = glob.glob(os.path.join(self.folder_imgs, '*.png')) + glob.glob(os.path.join(self.folder_imgs, '*.jpg')) + glob.glob(os.path.join(self.folder_imgs, '*.jpeg'))
         name_list = sorted(name_list)
         self.test_name_list = [name.split('/')[-1] for name in name_list]
-        print('len(dataset): ' + str(self.__len__()))
+        # print('len(dataset): ' + str(self.__len__()))
 
     def __getitem__(self, index):
         img_name = self.test_name_list[index]

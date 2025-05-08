@@ -9,6 +9,7 @@ import numpy as np
 import cv2
 import trimesh
 from tqdm import tqdm
+import sys
 
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
@@ -38,7 +39,7 @@ class NormalizingFlowPrior(nn.Module):
                 'path_pretrained': get_cfg_global_updated().paths.MODELPATH_NORMFLOW,
                 'subnet_fc_type': '3_64'}  
         else:
-            print(nf_version)
+            # print(nf_version)
             raise ValueError
         return param_dict
 
@@ -47,8 +48,8 @@ class NormalizingFlowPrior(nn.Module):
         # are kept fixed. Here we load those pretrained weights.
         if weight_path is None:
             weight_path = self.param_dict['path_pretrained']
-        print(' normalizing flow pose prior: loading {}..'.format(weight_path))
-        pretrained_dict = torch.load(weight_path)['model_state_dict']
+        # print(' normalizing flow pose prior: loading {}..'.format(weight_path))
+        pretrained_dict = torch.load("bite_release/"+weight_path)['model_state_dict']
         self.model_inn.load_state_dict(pretrained_dict, strict=True)
 
     def subnet_fc(self, c_in, c_out):
